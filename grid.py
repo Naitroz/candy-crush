@@ -7,6 +7,7 @@ g = [[3, 1, 2, 4, 3, 4, 2, 4, 1],[1, 2, 2, 1, 3, 3, 3, 3, 2],[1, 3, 2, 3, 4, 1, 
 class DragManager():
     listeDrop = []
     start_x, start_y = 0,0
+    dragged = 0
 
     def __init__(self,widget,drag=True,drop=True):
         self.widget = widget
@@ -27,11 +28,10 @@ class DragManager():
     def on_start(self, event):
         DragManager.start_x = event.x
         DragManager.start_y = event.y
+        DragManager.dragged = event.widget.winfo_containing(event.x, event.y).cget("background")
         print("arrraaa", event, DragManager.start_x, DragManager.start_y)
 
     def on_drag(self, event):
-        xd = event.x_root
-        yd = event.y_root
         dx = DragManager.start_x - event.x
         dy = DragManager.start_y - event.y
         print("ara", event, dx, dy)
@@ -40,12 +40,9 @@ class DragManager():
         # commencons par trouver le widget sous le curseur de la souris
         x,y = event.widget.winfo_pointerxy()
         target = event.widget.winfo_containing(x,y)
-        print("are")
         if target in DragManager.listeDrop:
-            try:
-                console.log(target)
-            except:
-                pass
+            print(target.cget("background"), DragManager.dragged)
+
 
 class Gui:
     def __init__(self, window, size, grid):
@@ -60,7 +57,7 @@ class Gui:
                 frame = tk.Canvas(master=window,relief=tk.RAISED,borderwidth=0,width=110,height=110)
                 a = DragManager(frame, drag=True, drop=True)
                 frame.grid(row=i, column=j, padx=5, pady=5)
-                c = frame.create_oval(0,0,100,100, fill=color[grid[i][j]-1])
+                c = frame.create_oval(0,0,55,55, fill=color[grid[i][j]-1])
 
 gui = Gui(window, 9, g)
 window.mainloop()
