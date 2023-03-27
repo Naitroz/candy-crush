@@ -46,10 +46,12 @@ def test_detect_coord(grille, i, j):
     j = 2
     print (detect_coord(grille, i, j)) == []
     
-def remove_comb(liste): #récupere la liste de detect combi et remplace par des 0
-    for k in range (len(liste)) :
-        i = 0
-        j = 0
-    return liste_vide
+def remove_comb(liste, grille):
+    for i in range(len(liste)):
+        nvliste = liste[i]
+        i=nvliste[0]
+        j=nvliste[1]
+        grille[i][j]=0
+    return grille
     
     
