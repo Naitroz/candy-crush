@@ -37,13 +37,9 @@ class DragManager():
         print("ara", event, dx, dy)
 
     def on_drop(self, event):
-        # commencons par trouver le widget sous le curseur de la souris
-        x, y = event.widget.winfo_pointerxy()
-        print(x,y)
-        item_id = event.widget.find_overlapping(x,y,x,y)
-        print(item_id)
-        color = event.widget.itemcget(item_id, "fill")
-        print(f"You should switch {DragManager.dragged} and {color}")
+        widget = event.widget.winfo_containing(event.x_root, event.y_root)
+        candy = widget.find_withtag("candy")
+        print(f"Dropped a {DragManager.dragged} candy onto a {widget.itemcget(candy[0], 'fill')}")
         
 class Gui:
     def __init__(self, window, size, grid):
@@ -58,9 +54,7 @@ class Gui:
                 frame = tk.Canvas(master=window,relief=tk.RAISED,borderwidth=0,width=110,height=110)
                 a = DragManager(frame, drag=True, drop=True)
                 frame.grid(row=i, column=j, padx=5, pady=5)
-                c = frame.create_oval(0,0,55,55, fill=color[grid[i][j]-1])
+                c = frame.create_oval(0,0,55,55, fill=color[grid[i][j]-1], tags="candy")
 
-gui = Gui(window, 9, g)
-window.mainloop()
 gui = Gui(window, 9, g)
 window.mainloop()
