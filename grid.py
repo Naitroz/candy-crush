@@ -5,8 +5,9 @@ window = tk.Tk()
 g = [[3, 1, 2, 4, 3, 4, 2, 4, 1],[1, 2, 2, 1, 3, 3, 3, 3, 2],[1, 3, 2, 3, 4, 1, 1, 3, 4],[2, 3, 1, 2, 3, 4, 1, 1, 4],[1, 3, 3, 2, 3, 3, 4, 1, 1],[1, 2, 4, 4, 4, 3, 1, 4, 3],[4, 4, 4, 4, 2, 2, 3, 4, 2],[4, 2, 4, 3, 2, 1, 3, 4, 2],[1, 3, 4, 2, 2, 2, 2, 2, 2]]
 
 class DragManager():
-    listeDrop = []
+    liste_drop = []
     start_x, start_y = 0,0
+    dragged = None
 
     def __init__(self,widget,drag=True,drop=True):
         self.widget = widget
@@ -15,7 +16,7 @@ class DragManager():
         if drag:
             self.add_dragable(self.widget)
         if drop:
-            DragManager.listeDrop.append(self.widget)
+            DragManager.liste_drop.append(self.widget)
     
     def add_dragable(self, widget):
         self.widget = widget
@@ -25,28 +26,25 @@ class DragManager():
         self.widget["cursor"] = "hand1"
     
     def on_start(self, event):
-        DragManager.start_x = event.x
-        DragManager.start_y = event.y
+        DragManager.start_x, DragManager.start_y = event.widget.winfo_pointerxy() 
+        dragged_item = event.widget.find_withtag("current")
+        DragManager.dragged = event.widget.itemcget(dragged_item, "fill")
         print("arrraaa", event, DragManager.start_x, DragManager.start_y)
 
     def on_drag(self, event):
-        xd = event.x_root
-        yd = event.y_root
-        dx = DragManager.start_x - event.x
-        dy = DragManager.start_y - event.y
+        dx = event.widget.winfo_pointerx() - DragManager.start_x
+        dy = event.widget.winfo_pointery() - DragManager.start_y
         print("ara", event, dx, dy)
-    
+
     def on_drop(self, event):
         # commencons par trouver le widget sous le curseur de la souris
-        x,y = event.widget.winfo_pointerxy()
-        target = event.widget.winfo_containing(x,y)
-        print("are")
-        if target in DragManager.listeDrop:
-            try:
-                console.log(target)
-            except:
-                pass
-
+        x, y = event.widget.winfo_pointerxy()
+        print(x,y)
+        item_id = event.widget.find_overlapping(x,y,x,y)
+        print(item_id)
+        color = event.widget.itemcget(item_id, "fill")
+        print(f"You should switch {DragManager.dragged} and {color}")
+        
 class Gui:
     def __init__(self, window, size, grid):
         color = ["green", "blue", "yellow", "red"]
@@ -60,7 +58,9 @@ class Gui:
                 frame = tk.Canvas(master=window,relief=tk.RAISED,borderwidth=0,width=110,height=110)
                 a = DragManager(frame, drag=True, drop=True)
                 frame.grid(row=i, column=j, padx=5, pady=5)
-                c = frame.create_oval(0,0,100,100, fill=color[grid[i][j]-1])
+                c = frame.create_oval(0,0,55,55, fill=color[grid[i][j]-1])
 
+gui = Gui(window, 9, g)
+window.mainloop()
 gui = Gui(window, 9, g)
 window.mainloop()
