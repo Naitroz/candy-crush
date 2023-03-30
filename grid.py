@@ -65,7 +65,7 @@ class DragManager():
         if self.get_widget_id(widget) != (self.get_widget_id(DragManager.dragged[0]) - 9) and self.get_widget_id(widget) != (self.get_widget_id(DragManager.dragged[0]) +9) and (self.get_widget_id(widget) != self.get_widget_id(DragManager.dragged[0]) -1) and self.get_widget_id(widget) != (self.get_widget_id(DragManager.dragged[0]) + 1) :
             print("La case doit être échangé avec une case adjacente")
             return
-
+        
         widget.itemconfig(candy[0], fill=dragged_color)
         DragManager.dragged[0].itemconfig(DragManager.dragged[1], fill=dropped_color) # Echange des couleurs
         
@@ -80,7 +80,6 @@ class DragManager():
 
     def get_widget_id(self, widget):
         id = list(map(int, re.findall(r'\d+', str(widget))))
-        print(id)
         return id[0] if id != [] else 1 
 
 class Gui:
@@ -98,6 +97,13 @@ class Gui:
                 a = DragManager(frame)
                 frame.grid(row=i, column=j, padx=5, pady=5)
                 c = frame.create_oval(0,0,55,55, fill=color[grid[i][j]-1], tags="candy")
+
+    def set_cell_color(row, col, color):
+        focus = f".!cCanvas{row*9 + col}"
+        for canvas in window.winfo_children():
+            if str(canvas) == focus:
+                canvas.itemconfig(canvas.find_withtag("candy")[0] , fill=color)
+
 
 
 gui = Gui(window, 9, g)
