@@ -10,13 +10,13 @@ def score (liste_coordonnees):
     if nb_groupes < 3 :
         score = 0
     elif nb_groupes == 3 :
-        score = nb_groupes**2 
+        score = score + nb_groupes**2 
     elif nb_groupes == 4 :
-        score = nb_groupes**2+nb_groupes*2
+        score = score + nb_groupes**2+nb_groupes*2
     elif nb_groupes == 5 :
-        score = nb_groupes**2+nb_groupes*3
+        score = score + nb_groupes**2+nb_groupes*3
     else : 
-        score = nb_groupes**3
+        score = score + nb_groupes**3
     return score
 
 def affichage_score (score):
