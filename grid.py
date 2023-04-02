@@ -42,7 +42,6 @@ class DragManager():
         """
         DragManager.start_x, DragManager.start_y = event.widget.winfo_pointerxy() 
         dragged_item = event.widget.find_withtag("current")
-        DragManager.dragged = event.widget.itemcget(dragged_item, "fill")
         DragManager.dragged = (event.widget, dragged_item)
 
     def on_drag(self, event):
@@ -51,9 +50,6 @@ class DragManager():
         """
         dx = event.widget.winfo_pointerx() - DragManager.start_x
         dy = event.widget.winfo_pointery() - DragManager.start_y
-        if dx < -50 or dx > 50 or dy < -50 or dy > 50 :
-            print("here")
-            window.event_generate('<Motion>', warp=True, x=event.widget.winfo_pointerx(), y=event.widget.winfo_pointery())
 
     def on_drop(self, event):
         """
@@ -66,8 +62,15 @@ class DragManager():
         dropped_color = widget.itemcget(candy[0], 'fill')
         dragged_color = DragManager.dragged[0].itemcget(DragManager.dragged[1], "fill") # On garde en mémoire les couleurs des deux bonbons avant modification
         
-        widget.itemconfig(candy[0], fill=dragged_color)
-        DragManager.dragged[0].itemconfig(DragManager.dragged[1], fill=dropped_color) # Echange des couleurs
+        dropped_id = self.get_widget_id(widget)
+        dragged_id = self.get_widget_id(DragManager.dragged[0])
+
+        if self.get_widget_id(widget) != (self.get_widget_id(DragManager.dragged[0]) - 9) and self.get_widget_id(widget) != (self.get_widget_id(DragManager.dragged[0]) +9) and (self.get_widget_id(widget) != self.get_widget_id(DragManager.dragged[0]) -1) and self.get_widget_id(widget) != (self.get_widget_id(DragManager.dragged[0]) + 1) :
+            print("La case doit être échangé avec une case adjacente")
+            return
+
+        set_cell_color(dropped_id//9, dropped_id%9, dragged_color)
+        set_cell_color(dragged_id//9, dragged_id%9, dropped_color)
         
         # Bon là j'ai un peu abusé, notre grille est un tableau 2D 
         #mais les identifiants sont en 1D (ils augmentent de 1 en 1). 
@@ -75,15 +78,23 @@ class DragManager():
         # Je prend le quotient de la division euclienne pour connaitre la ligne (-1 pour les indices)
         # Je prends ensuite le reste pour connaitre la colonne (toujours -1)
         # Je modifie ensuite ces valeurs dans la grille pour que ça corresponde à la bonne couleur
-        g[(int(re.findall(r'\d+', str(widget))[0])-1 )//9][(int(re.findall(r'\d+', str(widget))[0])-1 )%9] = color.index(dragged_color) + 1
-        g[(int(re.findall(r'\d+', str(DragManager.dragged[0]))[0])-1 )//9][(int(re.findall(r'\d+', str(DragManager.dragged[0]))[0])-1 )%9] = color.index(dropped_color) + 1
- 
+        g[(self.get_widget_id(widget)-1 )//9][(self.get_widget_id(widget)-1 )%9] = color.index(dragged_color) + 1
+        g[(self.get_widget_id(DragManager.dragged[0])-1 )//9][(self.get_widget_id(DragManager.dragged[0])-1 )%9] = color.index(dropped_color) + 1
+
+    def get_widget_id(self, widget):
+        id = list(map(int, re.findall(r'\d+', str(widget))))
+        return id[0] if id != [] else 1 
+
 class Gui:
     """
     Gestion de l'interface graphique
     """
     def __init__(self, window, size, grid):
         # Intensive grid generation here
+
+        label = tk.Label(master=window, text="My Game", font=("Hack", 16))
+        label.grid(row=0, column=0, columnspan=size)
+
         for i in range(size):
             window.columnconfigure(i, weight=1, minsize=75)
             window.rowconfigure(i, weight=1, minsize=75) #Creation d'une grille de la bonne taille
@@ -94,7 +105,13 @@ class Gui:
                 frame.grid(row=i, column=j, padx=5, pady=5)
                 c = frame.create_oval(0,0,55,55, fill=color[grid[i][j]-1], tags="candy")
 
+def set_cell_color(row, col, color):
+    focus = f".!canvas{row*9 + col}"
+    if row*9 + col == 1 :
+        focus = ".!canvas"
+    for canvas in window.winfo_children():
+        if str(canvas) == focus:
+            canvas.itemconfig(canvas.find_withtag("candy")[0] , fill=color)
 
 gui = Gui(window, 9, g)
 window.mainloop()
-
