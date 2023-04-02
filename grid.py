@@ -61,13 +61,16 @@ class DragManager():
 
         dropped_color = widget.itemcget(candy[0], 'fill')
         dragged_color = DragManager.dragged[0].itemcget(DragManager.dragged[1], "fill") # On garde en mémoire les couleurs des deux bonbons avant modification
-       
+        
+        dropped_id = self.get_widget_id(widget)
+        dragged_id = self.get_widget_id(DragManager.dragged[0])
+
         if self.get_widget_id(widget) != (self.get_widget_id(DragManager.dragged[0]) - 9) and self.get_widget_id(widget) != (self.get_widget_id(DragManager.dragged[0]) +9) and (self.get_widget_id(widget) != self.get_widget_id(DragManager.dragged[0]) -1) and self.get_widget_id(widget) != (self.get_widget_id(DragManager.dragged[0]) + 1) :
             print("La case doit être échangé avec une case adjacente")
             return
-        
-        widget.itemconfig(candy[0], fill=dragged_color)
-        DragManager.dragged[0].itemconfig(DragManager.dragged[1], fill=dropped_color) # Echange des couleurs
+
+        set_cell_color(dropped_id//9, dropped_id%9, dragged_color)
+        set_cell_color(dragged_id//9, dragged_id%9, dropped_color)
         
         # Bon là j'ai un peu abusé, notre grille est un tableau 2D 
         #mais les identifiants sont en 1D (ils augmentent de 1 en 1). 
@@ -88,6 +91,10 @@ class Gui:
     """
     def __init__(self, window, size, grid):
         # Intensive grid generation here
+
+        label = tk.Label(master=window, text="My Game", font=("Hack", 16))
+        label.grid(row=0, column=0, columnspan=size)
+
         for i in range(size):
             window.columnconfigure(i, weight=1, minsize=75)
             window.rowconfigure(i, weight=1, minsize=75) #Creation d'une grille de la bonne taille
@@ -98,14 +105,13 @@ class Gui:
                 frame.grid(row=i, column=j, padx=5, pady=5)
                 c = frame.create_oval(0,0,55,55, fill=color[grid[i][j]-1], tags="candy")
 
-    def set_cell_color(row, col, color):
-        focus = f".!cCanvas{row*9 + col}"
-        for canvas in window.winfo_children():
-            if str(canvas) == focus:
-                canvas.itemconfig(canvas.find_withtag("candy")[0] , fill=color)
-
-
+def set_cell_color(row, col, color):
+    focus = f".!canvas{row*9 + col}"
+    if row*9 + col == 1 :
+        focus = ".!canvas"
+    for canvas in window.winfo_children():
+        if str(canvas) == focus:
+            canvas.itemconfig(canvas.find_withtag("candy")[0] , fill=color)
 
 gui = Gui(window, 9, g)
 window.mainloop()
-
