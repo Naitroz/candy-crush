@@ -64,7 +64,8 @@ class DragManager():
         
         dropped_id = self.get_widget_id(widget)
         dragged_id = self.get_widget_id(DragManager.dragged[0])
-
+        
+        # On test ici si le mouvement que le joueur souhaite réalisé est possible ou non. Si il ne l'est pas, on affiche un message dans la console et on quitte la fonction sans faire de modification
         if self.get_widget_id(widget) != (self.get_widget_id(DragManager.dragged[0]) - 9) and self.get_widget_id(widget) != (self.get_widget_id(DragManager.dragged[0]) +9) and (self.get_widget_id(widget) != self.get_widget_id(DragManager.dragged[0]) -1) and self.get_widget_id(widget) != (self.get_widget_id(DragManager.dragged[0]) + 1) :
             print("La case doit être échangé avec une case adjacente")
             return
@@ -73,8 +74,7 @@ class DragManager():
         set_cell_color(dragged_id//9, dragged_id%9, dropped_color)
         
         # Bon là j'ai un peu abusé, notre grille est un tableau 2D 
-        #mais les identifiants sont en 1D (ils augmentent de 1 en 1). 
-        #J'utilise donc du regex (un truc magique) pour extraire jsute le numéro qui m'intéresse puis ensuite je le fait rentrer dans le tableau 2D de la façon suivante : 
+        # mais les identifiants sont en 1D (ils augmentent de 1 en 1). Donc on procède de la manière suivante :   
         # Je prend le quotient de la division euclienne pour connaitre la ligne (-1 pour les indices)
         # Je prends ensuite le reste pour connaitre la colonne (toujours -1)
         # Je modifie ensuite ces valeurs dans la grille pour que ça corresponde à la bonne couleur
