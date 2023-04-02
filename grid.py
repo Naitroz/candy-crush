@@ -3,8 +3,9 @@ import random
 import re
 
 window = tk.Tk()
-g = [[3, 1, 2, 4, 3, 4, 2, 4, 1],[1, 2, 2, 1, 3, 3, 3, 3, 2],[1, 3, 2, 3, 4, 1, 1, 3, 4],[2, 3, 1, 2, 3, 4, 1, 1, 4],[1, 3, 3, 2, 3, 3, 4, 1, 1],[1, 2, 4, 4, 4, 3, 1, 4, 3],[4, 4, 4, 4, 2, 2, 3, 4, 2],[4, 2, 4, 3, 2, 1, 3, 4, 2],[1, 3, 4, 2, 2, 2, 2, 2, 2]]
-color = ["green", "blue", "yellow", "red"]
+g = [[3, 1, 2, 4, 3, 4, 2, 4, 1],[1, 2, 2, 1, 3, 3, 3, 5, 6],[1, 3, 2, 3, 4, 1, 1, 3, 4],[2, 3, 1, 2, 3, 4, 1, 1, 4],[1, 3, 3, 2, 3, 3, 4, 1, 1],[1, 2, 4, 4, 4, 3, 1, 4, 3],[4, 4, 4, 4, 2, 2, 3, 4, 2],[4, 2, 4, 3, 2, 1, 3, 4, 2],[1, 3, 4, 2, 2, 2, 2, 2, 2]]
+color = ["green", "blue", "yellow", "red", "purple", "brown"]
+score = 0
 
 class DragManager():
     """
@@ -99,9 +100,7 @@ class Gui:
     """
     def __init__(self, window, size, grid):
         # Intensive grid generation here
-
-        label = tk.Label(master=window, text="My Game", font=("Hack", 16))
-        label.grid(row=0, column=0, columnspan=size)
+        window.title(f"Omg candy crush V4 | Score : {score}")
 
         for i in range(size):
             window.columnconfigure(i, weight=1, minsize=75)
@@ -123,6 +122,10 @@ def set_cell_color(row, col, color):
     for canvas in window.winfo_children():
         if str(canvas) == focus:
             canvas.itemconfig(canvas.find_withtag("candy")[0] , fill=color)
+
+def update_score(new):
+    score = new
+    window.title(f"Candy Crush| Score : {score}")
 
 gui = Gui(window, 9, g)
 window.mainloop()
