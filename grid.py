@@ -82,6 +82,14 @@ class DragManager():
         g[(self.get_widget_id(DragManager.dragged[0])-1 )//9][(self.get_widget_id(DragManager.dragged[0])-1 )%9] = color.index(dropped_color) + 1
 
     def get_widget_id(self, widget):
+        """
+        Cette fonction permet de récupérer le vrai nom d'un bonbon (un numéro entre 1 et 81).
+        Argument : widget contenant le bonbon
+        Retourne : l'ID du bonbon correspondant
+        Fonctionnement :
+            On utilise ce qui s'appelle un regex, un truc magique qui permet de cherche des choses dans des chaines de caractères. Ici, on cherche un numéro dans le nom. Or, ça le renvoie sous forme d'une liste de chaine de caractère qui réponde aux conditions définies dans le regex donc on utilise ensuite le list(map(int, l)) pour reconvertir tout ça en entier propres :D
+            On retourne ensuite le premier element de la liste ou 1 si cette liste est vie
+        """
         id = list(map(int, re.findall(r'\d+', str(widget))))
         return id[0] if id != [] else 1 
 
