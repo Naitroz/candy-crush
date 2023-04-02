@@ -114,6 +114,9 @@ class Gui:
                 c = frame.create_oval(0,0,55,55, fill=color[grid[i][j]-1], tags="candy")
 
 def set_cell_color(row, col, color):
+    """
+    Permet de changer la couleur d'un des éléments de la grille en prenant en argument les coordonnées x et y
+    """
     focus = f".!canvas{row*9 + col}"
     if row*9 + col == 1 :
         focus = ".!canvas"
